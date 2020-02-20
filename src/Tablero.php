@@ -7,7 +7,7 @@ class Tablero
     private $tablero;
     public function __construct()
     {
-        $this->tablero = array_fill(0, 7, array_fill(0, 7, new \Piezas\PiezaNull("blanca")));
+        $this->tablero = array_fill(0, 7, array_fill(0, 7, new \Piezas\PiezaNull));
     }
     public function mostrar(): array
     {
@@ -24,27 +24,33 @@ class Tablero
     }
     public function mover(int $x1, int $y1, int $x2, int $y2): bool
     {
-        if ($x1 > 8 || $x2 > 8 || $y1 > 8 || $y2 > 8 || $x1 <= 0 || $x2 < 0 || $y1 < 0 || $y2 < 0 ||
-         $this->tablero[$x1][$y1] === new \Piezas\PiezaNull("blanca") ||
-          (($this->tablero[$x2][$y2] instanceof \Piezas\PiezaNull) || $this->tablero[$x1][$y1]->esBlanco() === $this->tablero[$x2][$y2]->esBlanco()) ) {
+        if (
+            $x1 > 8 || $x2 > 8 || $y1 > 8 || $y2 > 8
+            || $x1 < 0 || $x2 < 0 || $y1 < 0 || $y2 < 0
+        ) { //POSICION FUERA DEL TABLERO
             return false;
-        } else {
-            if ($this->tablero[$x1][$y1]->mover($x1, $y1, $x2, $y2, $this)) {
+        }
+        if ($this->tablero[$x1][$y1] === new \Piezas\PiezaNull) { //NO HAY UNA PIEZA EN LA POSICION ORIGEN
+            return false;
+        }
+        if ($this->tablero[$x1][$y1]->esBlanca() === $this->tablero[$x2][$y2]->esBlanca()) { // YA HAY UNA PIEZA PROPIA EN EL DESTINO
+            return false;
+        } 
+        if ($this->tablero[$x1][$y1]->mover($x1, $y1, $x2, $y2, $this)) { // EL MOVIMIENTO CORRESPONDE CON LA CLASE DE PIEZA
                 $this->colocarPieza($x2, $y2, $this->tablero[$x1][$y1]);
-                $this->colocarPieza($x1, $y1, new \Piezas\PiezaNull("blanca"));
+                $this->colocarPieza($x1, $y1, new \Piezas\PiezaNull);
                 return true;
-            }else{
+            } else {
                 return false;
             }
-        }
     }
     public function termino(): bool
     {
         $rey = 0;
-        foreach($this->tablero as $f){
-            foreach($f as $v){
-                if($v instanceof \Piezas\Rey){
-                    $rey +=1;
+        foreach ($this->tablero as $f) {
+            foreach ($f as $v) {
+                if ($v instanceof \Piezas\Rey) {
+                    $rey += 1;
                 }
             }
         }
@@ -54,7 +60,7 @@ class Tablero
     {
         $pieza = $this->tablero[$x][$y];
         if ($pieza instanceof \Piezas\PiezaNull) {
-            return new \Piezas\PiezaNull("blanca");
+            return new \Piezas\PiezaNull;
         } else {
             return $pieza;
         }

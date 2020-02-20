@@ -1,5 +1,7 @@
 <?php
 
+require("../vendor/bin/autoload.php");
+
 use \Chess\Tablero;
 use \Piezas\Peon;
 
